@@ -1,0 +1,51 @@
+name: Update Photo Index
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '15 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Generate image index
+        shell: bash
+        run: |
+          python3 <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          exts={'.jpg','.jpeg','.png','.webp','.gif','.heic','.heif','.avif','.bmp','.tif','.tiff'}
+          images=[]
+          for p in Path('.').rglob('*'):
+              if not p.is_file() or '.git' in p.parts or p.name == 'images.json':
+                  continue
+              if p.suffix.lower() in exts:
+                  rel=p.as_posix()
+                  images.append({'name':p.name,'path':rel,'url':'./'+rel})
+          images.sort(key=lambda x:x['path'].lower())
+          data={'generated_at':datetime.now(timezone.utc).isoformat(),'count':len(images),'images':images}
+          Path('data').mkdir(exist_ok=True)
+          Path('data/images.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print(f'Indexed {len(images)} images')
+          PY
+
+      - name: Commit updated index
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/images.json
+          git diff --cached --quiet && exit 0
+          git commit -m 'chore: update photo index'
+          git push
