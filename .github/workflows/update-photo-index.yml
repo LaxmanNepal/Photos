@@ -23,21 +23,36 @@ jobs:
         shell: bash
         run: |
           python3 <<'PY'
-          import json, os
+          import json
           from datetime import datetime, timezone
           from pathlib import Path
+
           exts={'.jpg','.jpeg','.png','.webp','.gif','.heic','.heif','.avif','.bmp','.tif','.tiff'}
+          base='https://media.githubusercontent.com/media/LaxmanNepal/Photos/main/'
           images=[]
+
           for p in Path('.').rglob('*'):
               if not p.is_file() or '.git' in p.parts or p.name == 'images.json':
                   continue
               if p.suffix.lower() in exts:
                   rel=p.as_posix()
-                  images.append({'name':p.name,'path':rel,'url':'./'+rel})
+                  images.append({
+                      'name':p.name,
+                      'path':rel,
+                      'url':base+rel
+                  })
+
           images.sort(key=lambda x:x['path'].lower())
-          data={'generated_at':datetime.now(timezone.utc).isoformat(),'count':len(images),'images':images}
+          data={
+              'generated_at':datetime.now(timezone.utc).isoformat(),
+              'count':len(images),
+              'images':images
+          }
           Path('data').mkdir(exist_ok=True)
-          Path('data/images.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          Path('data/images.json').write_text(
+              json.dumps(data,ensure_ascii=False,indent=2)+'\n',
+              encoding='utf-8'
+          )
           print(f'Indexed {len(images)} images')
           PY
 
