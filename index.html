@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f5f5f7">
-  <meta name="description" content="Laxman Nepal Photos — a beautiful personal photo gallery.">
+  <meta name="description" content="Laxman Nepal Photos — a fast personal photo library.">
   <title>Laxman Nepal Photos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,26 +25,26 @@
       <div>
         <p class="eyebrow">PERSONAL LIBRARY</p>
         <h1>All Photos</h1>
-        <p class="subtitle"><span id="count">0</span> photos · automatically updated</p>
+        <p class="subtitle"><span id="count">0</span> photos · thumbnails optimized automatically</p>
       </div>
       <div class="date-pill glass" id="updated">Updating…</div>
     </section>
 
     <div id="searchBar" class="search-wrap glass hidden">
-      <input id="searchInput" type="search" placeholder="Search photos by filename…" autocomplete="off">
-      <button id="clearSearch" class="clear-btn">×</button>
+      <input id="searchInput" type="search" placeholder="Search by filename, folder, year…" autocomplete="off">
+      <button id="clearSearch" class="clear-btn" aria-label="Clear search">×</button>
     </div>
 
     <section id="gallery" class="gallery" aria-live="polite"></section>
-    <div id="empty" class="empty glass hidden"><div class="empty-icon">▧</div><h2>No photos yet</h2><p>Add JPG, JPEG, PNG, WEBP, GIF, HEIC or AVIF images anywhere in this repository. The gallery index updates automatically.</p></div>
-    <div id="loading" class="loading"><span></span><span></span><span></span></div>
+    <div id="empty" class="empty glass hidden"><div class="empty-icon">▧</div><h2>No photos found</h2><p>Add JPG, JPEG, PNG, WEBP, GIF, HEIC or AVIF images anywhere in this repository. The gallery index updates automatically.</p></div>
+    <div id="loading" class="loading" aria-label="Loading photos"><span></span><span></span><span></span></div>
   </main>
 
-  <div id="viewer" class="viewer hidden" role="dialog" aria-modal="true">
-    <button id="closeViewer" class="viewer-close">×</button>
-    <button id="prevBtn" class="viewer-nav prev">‹</button>
+  <div id="viewer" class="viewer hidden" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button id="closeViewer" class="viewer-close" aria-label="Close">×</button>
+    <button id="prevBtn" class="viewer-nav prev" aria-label="Previous photo">‹</button>
     <div class="viewer-content"><img id="viewerImg" alt=""><div id="viewerCaption"></div></div>
-    <button id="nextBtn" class="viewer-nav next">›</button>
+    <button id="nextBtn" class="viewer-nav next" aria-label="Next photo">›</button>
   </div>
 
   <footer>© <span id="year"></span> Laxman Nepal · Photos</footer>
