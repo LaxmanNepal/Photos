@@ -25,7 +25,7 @@
       <div>
         <p class="eyebrow">PERSONAL LIBRARY</p>
         <h1>All Photos</h1>
-        <p class="subtitle"><span id="count">0</span> photos · thumbnails optimized automatically</p>
+        <p class="subtitle"><span id="count">0</span> photos · organized automatically</p>
       </div>
       <div class="date-pill glass" id="updated">Updating…</div>
     </section>
@@ -33,6 +33,14 @@
     <div id="searchBar" class="search-wrap glass hidden">
       <input id="searchInput" type="search" placeholder="Search by filename, folder, year…" autocomplete="off">
       <button id="clearSearch" class="clear-btn" aria-label="Clear search">×</button>
+    </div>
+
+    <div class="viewbar">
+      <div class="view-tabs glass" role="tablist" aria-label="Gallery view">
+        <button id="timelineBtn" class="view-tab active" role="tab">Timeline</button>
+        <button id="gridBtn" class="view-tab" role="tab">Grid</button>
+      </div>
+      <span id="resultCount" class="result-count"></span>
     </div>
 
     <section id="gallery" class="gallery" aria-live="polite"></section>
@@ -43,7 +51,19 @@
   <div id="viewer" class="viewer hidden" role="dialog" aria-modal="true" aria-label="Photo viewer">
     <button id="closeViewer" class="viewer-close" aria-label="Close">×</button>
     <button id="prevBtn" class="viewer-nav prev" aria-label="Previous photo">‹</button>
-    <div class="viewer-content"><img id="viewerImg" alt=""><div id="viewerCaption"></div></div>
+    <div class="viewer-content">
+      <img id="viewerImg" alt="" draggable="false">
+      <div id="viewerCaption"></div>
+      <div class="viewer-actions">
+        <button id="zoomOut" aria-label="Zoom out">−</button>
+        <button id="zoomReset" aria-label="Reset zoom">100%</button>
+        <button id="zoomIn" aria-label="Zoom in">+</button>
+        <button id="downloadBtn" aria-label="Download photo">↓</button>
+        <button id="shareBtn" aria-label="Share photo">↗</button>
+        <button id="detailsBtn" aria-label="Photo details">ⓘ</button>
+      </div>
+      <div id="detailsPanel" class="details-panel hidden"></div>
+    </div>
     <button id="nextBtn" class="viewer-nav next" aria-label="Next photo">›</button>
   </div>
 
