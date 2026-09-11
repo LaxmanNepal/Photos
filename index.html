@@ -1,73 +1,13 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f5f5f7">
-  <meta name="description" content="Laxman Nepal Photos — a fast personal photo library.">
-  <title>Laxman Nepal Photos</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#f5f5f7"><meta name="description" content="Laxman Nepal Photos — a fast personal photo library."><title>Laxman Nepal Photos</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"></head>
 <body>
-  <header class="topbar glass">
-    <div class="brand"><span class="brand-dot"></span><div><strong>Laxman Nepal</strong><small>Photos</small></div></div>
-    <div class="toolbar">
-      <button id="searchBtn" class="icon-btn" aria-label="Search">⌕</button>
-      <button id="themeBtn" class="icon-btn" aria-label="Toggle appearance">☼</button>
-    </div>
-  </header>
-
-  <main>
-    <section class="hero">
-      <div>
-        <p class="eyebrow">PERSONAL LIBRARY</p>
-        <h1>All Photos</h1>
-        <p class="subtitle"><span id="count">0</span> photos · organized automatically</p>
-      </div>
-      <div class="date-pill glass" id="updated">Updating…</div>
-    </section>
-
-    <div id="searchBar" class="search-wrap glass hidden">
-      <input id="searchInput" type="search" placeholder="Search by filename, folder, year…" autocomplete="off">
-      <button id="clearSearch" class="clear-btn" aria-label="Clear search">×</button>
-    </div>
-
-    <div class="viewbar">
-      <div class="view-tabs glass" role="tablist" aria-label="Gallery view">
-        <button id="timelineBtn" class="view-tab active" role="tab">Timeline</button>
-        <button id="gridBtn" class="view-tab" role="tab">Grid</button>
-      </div>
-      <span id="resultCount" class="result-count"></span>
-    </div>
-
-    <section id="gallery" class="gallery" aria-live="polite"></section>
-    <div id="empty" class="empty glass hidden"><div class="empty-icon">▧</div><h2>No photos found</h2><p>Add JPG, JPEG, PNG, WEBP, GIF, HEIC or AVIF images anywhere in this repository. The gallery index updates automatically.</p></div>
-    <div id="loading" class="loading" aria-label="Loading photos"><span></span><span></span><span></span></div>
-  </main>
-
-  <div id="viewer" class="viewer hidden" role="dialog" aria-modal="true" aria-label="Photo viewer">
-    <button id="closeViewer" class="viewer-close" aria-label="Close">×</button>
-    <button id="prevBtn" class="viewer-nav prev" aria-label="Previous photo">‹</button>
-    <div class="viewer-content">
-      <img id="viewerImg" alt="" draggable="false">
-      <div id="viewerCaption"></div>
-      <div class="viewer-actions">
-        <button id="zoomOut" aria-label="Zoom out">−</button>
-        <button id="zoomReset" aria-label="Reset zoom">100%</button>
-        <button id="zoomIn" aria-label="Zoom in">+</button>
-        <button id="downloadBtn" aria-label="Download photo">↓</button>
-        <button id="shareBtn" aria-label="Share photo">↗</button>
-        <button id="detailsBtn" aria-label="Photo details">ⓘ</button>
-      </div>
-      <div id="detailsPanel" class="details-panel hidden"></div>
-    </div>
-    <button id="nextBtn" class="viewer-nav next" aria-label="Next photo">›</button>
-  </div>
-
-  <footer>© <span id="year"></span> Laxman Nepal · Photos</footer>
-  <script src="app.js"></script>
-</body>
-</html>
+<header class="topbar glass"><div class="brand"><span class="brand-dot"></span><div><strong>Laxman Nepal</strong><small>Photos</small></div></div><div class="toolbar"><button id="searchBtn" class="icon-btn" aria-label="Search">⌕</button><button id="statsBtn" class="icon-btn" aria-label="Library statistics">▥</button><button id="themeBtn" class="icon-btn" aria-label="Toggle appearance">☼</button></div></header>
+<main><section class="hero"><div><p class="eyebrow">PERSONAL LIBRARY</p><h1 id="pageTitle">All Photos</h1><p class="subtitle"><span id="count">0</span> photos · organized automatically</p></div><div class="date-pill glass" id="updated">Updating…</div></section>
+<div id="searchBar" class="search-wrap glass hidden"><input id="searchInput" type="search" placeholder="Search by filename, folder, year…" autocomplete="off"><button id="clearSearch" class="clear-btn" aria-label="Clear search">×</button></div>
+<div class="library-tabs glass" role="tablist" aria-label="Photo library"><button class="library-tab active" data-library="all">All Photos</button><button class="library-tab" data-library="recent">Recently Added</button><button class="library-tab" data-library="favorites">Favorites <span id="favoriteCount">0</span></button></div>
+<div id="filters" class="filters glass"><button class="filter-chip active" data-filter="all">All</button><button class="filter-chip" data-filter="portrait">Portrait</button><button class="filter-chip" data-filter="landscape">Landscape</button><button class="filter-chip" data-filter="square">Square</button><button class="filter-chip" data-filter="large">Large files</button><button id="clearFilters" class="filter-chip clear-filter">Reset</button></div>
+<section id="statsPanel" class="stats-panel glass hidden" aria-label="Library statistics"><div class="stat"><strong id="statPhotos">0</strong><span>Photos</span></div><div class="stat"><strong id="statSize">0 B</strong><span>Library size</span></div><div class="stat"><strong id="statYears">0</strong><span>Years</span></div><div class="stat"><strong id="statLatest">—</strong><span>Latest</span></div></section>
+<div class="viewbar"><div class="view-tabs glass" role="tablist" aria-label="Gallery view"><button id="timelineBtn" class="view-tab active" role="tab">Timeline</button><button id="gridBtn" class="view-tab" role="tab">Grid</button></div><span id="resultCount" class="result-count"></span></div>
+<section id="gallery" class="gallery" aria-live="polite"></section><div id="empty" class="empty glass hidden"><div class="empty-icon">▧</div><h2>No photos found</h2><p id="emptyText">Add images anywhere in this repository. The gallery index updates automatically.</p></div><div id="loading" class="loading" aria-label="Loading photos"><span></span><span></span><span></span></div></main>
+<div id="viewer" class="viewer hidden" role="dialog" aria-modal="true" aria-label="Photo viewer"><button id="closeViewer" class="viewer-close" aria-label="Close">×</button><button id="prevBtn" class="viewer-nav prev" aria-label="Previous photo">‹</button><div class="viewer-content"><img id="viewerImg" alt="" draggable="false"><button id="favoriteBtn" class="favorite-viewer" aria-label="Toggle favorite">♡</button><div id="viewerCaption"></div><div class="viewer-actions"><button id="zoomOut" aria-label="Zoom out">−</button><button id="zoomReset" aria-label="Reset zoom">100%</button><button id="zoomIn" aria-label="Zoom in">+</button><button id="downloadBtn" aria-label="Download photo">↓</button><button id="shareBtn" aria-label="Share photo">↗</button><button id="detailsBtn" aria-label="Photo details">ⓘ</button></div><div id="detailsPanel" class="details-panel hidden"></div></div><button id="nextBtn" class="viewer-nav next" aria-label="Next photo">›</button></div>
+<footer>© <span id="year"></span> Laxman Nepal · Photos</footer><script src="app.js"></script></body></html>
