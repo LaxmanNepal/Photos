@@ -30,7 +30,7 @@ jobs:
           import json
           from datetime import datetime, timezone
           from pathlib import Path
-          from PIL import Image, ExifTags
+          from PIL import Image
 
           exts={'.jpg','.jpeg','.png','.webp','.gif','.heic','.heif','.avif','.bmp','.tif','.tiff'}
           thumb_exts={'.jpg','.jpeg','.png','.webp','.gif','.bmp','.tif','.tiff'}
@@ -39,16 +39,38 @@ jobs:
           thumb_root.mkdir(exist_ok=True)
           images=[]
 
-          def exif_date(img):
+          def exif_data(img):
+              date_value=None; gps_value=None
               try:
                   exif=img.getexif()
                   for key in (36867,36868):
                       value=exif.get(key)
                       if value:
-                          return str(value).replace(':','-',2).replace(' ','T')
+                          date_value=str(value).replace(':','-',2).replace(' ','T')
+                          break
+                  try:
+                      raw=exif.get_ifd(34853) or {}
+                      def ratio(v):
+                          try: return float(v)
+                          except Exception:
+                              try: return float(v.numerator)/float(v.denominator)
+                              except Exception: return None
+                      lat_ref=raw.get(1); lat_raw=raw.get(2); lon_ref=raw.get(3); lon_raw=raw.get(4)
+                      if lat_raw and lon_raw:
+                          lat_parts=[ratio(v) for v in lat_raw]; lon_parts=[ratio(v) for v in lon_raw]
+                          if all(v is not None for v in lat_parts+lon_parts):
+                              lat=lat_parts[0]+lat_parts[1]/60+lat_parts[2]/3600
+                              lon=lon_parts[0]+lon_parts[1]/60+lon_parts[2]/3600
+                              if str(lat_ref).upper().startswith('S'): lat=-lat
+                              if str(lon_ref).upper().startswith('W'): lon=-lon
+                              if abs(lat)<=90 and abs(lon)<=180:
+                                  # Public repo privacy: keep only coarse coordinates (~1 km).
+                                  gps_value={'latitude':round(lat,2),'longitude':round(lon,2)}
+                  except Exception:
+                      pass
               except Exception:
                   pass
-              return None
+              return date_value,gps_value
 
           for p in Path('.').rglob('*'):
               if not p.is_file() or '.git' in p.parts or p.name == 'images.json' or 'thumbnails' in p.parts:
@@ -56,62 +78,38 @@ jobs:
               if p.suffix.lower() not in exts:
                   continue
 
-              rel=p.as_posix()
-              stat=p.stat()
-              item={
-                  'name':p.name,
-                  'path':rel,
-                  'url':base+rel,
-                  'size':stat.st_size,
-                  'modified_at':datetime.fromtimestamp(stat.st_mtime,timezone.utc).isoformat(),
-                  'type':p.suffix.lower().lstrip('.')
-              }
+              rel=p.as_posix(); stat=p.stat()
+              item={'name':p.name,'path':rel,'url':base+rel,'size':stat.st_size,'modified_at':datetime.fromtimestamp(stat.st_mtime,timezone.utc).isoformat(),'type':p.suffix.lower().lstrip('.')}
 
               try:
                   with Image.open(p) as img:
                       item['width'],item['height']=img.size
-                      item['date']=exif_date(img)
-              except Exception as e:
-                  item['width']=None
-                  item['height']=None
-
-              if not item.get('date'):
-                  item['date']=item['modified_at']
-
-              try:
-                  dt=datetime.fromisoformat(item['date'].replace('Z','+00:00'))
-                  item['year']=dt.year
-                  item['month']=dt.strftime('%Y-%m')
+                      date_value,gps_value=exif_data(img)
+                      item['date']=date_value
+                      if gps_value: item['gps']=gps_value
               except Exception:
-                  item['year']=None
-                  item['month']=None
+                  item['width']=None; item['height']=None; item['date']=None
+
+              if not item.get('date'): item['date']=item['modified_at']
+              try:
+                  dt=datetime.fromisoformat(item['date'].replace('Z','+00:00')); item['year']=dt.year; item['month']=dt.strftime('%Y-%m')
+              except Exception: item['year']=None; item['month']=None
 
               if p.suffix.lower() in thumb_exts:
-                  thumb_rel=Path(rel).with_suffix('.webp')
-                  thumb_path=thumb_root/thumb_rel
-                  thumb_path.parent.mkdir(parents=True,exist_ok=True)
+                  thumb_rel=Path(rel).with_suffix('.webp'); thumb_path=thumb_root/thumb_rel; thumb_path.parent.mkdir(parents=True,exist_ok=True)
                   try:
                       with Image.open(p) as img:
                           img.seek(0)
-                          if img.mode not in ('RGB','RGBA'):
-                              img=img.convert('RGB')
+                          if img.mode not in ('RGB','RGBA'): img=img.convert('RGB')
                           img.thumbnail((720,720),Image.Resampling.LANCZOS)
                           img.save(thumb_path,'WEBP',quality=78,method=6)
                       item['thumbnail']=thumb_path.as_posix()
-                  except Exception as e:
-                      print(f'Thumbnail skipped: {rel}: {e}')
-
+                  except Exception as e: print(f'Thumbnail skipped: {rel}: {e}')
               images.append(item)
 
           images.sort(key=lambda x:(x.get('date') or '',x['path'].lower()),reverse=True)
-          data={
-              'schema_version':2,
-              'generated_at':datetime.now(timezone.utc).isoformat(),
-              'count':len(images),
-              'images':images
-          }
-          Path('data').mkdir(exist_ok=True)
-          Path('data/images.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          data={'schema_version':3,'generated_at':datetime.now(timezone.utc).isoformat(),'count':len(images),'images':images}
+          Path('data').mkdir(exist_ok=True); Path('data/images.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
           print(f'Indexed {len(images)} images')
           PY
 
